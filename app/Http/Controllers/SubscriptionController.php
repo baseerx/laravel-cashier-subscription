@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Plan;
 use App\Model\User;
 use App\Plan as AppPlan;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class SubscriptionController extends Controller
 {
@@ -19,16 +21,35 @@ class SubscriptionController extends Controller
     public function create(Request $request, Plan $plan)
     {
         $plan = Plan::findOrFail($request->get('plan'));
+        // Log::info($request->all());
+        // Log::info($plan);
 
         $user = $request->user();
         $paymentMethod = $request->paymentMethod;
 
         $user->createOrGetStripeCustomer();
         $user->updateDefaultPaymentMethod($paymentMethod);
-        $user->newSubscription('default', $plan->stripe_plan)
+        // below code for active subscription
+        // $user->newSubscription('Second', 'price_1MCmIQB0DWwA7fx5j0KDhKXc')
+        //     ->create($paymentMethod, [
+        //         'email' => $user->email,
+        //     ]);
+
+        // below code is working fine trail by many days delay
+        // $request->user()->newSubscription('Second', 'price_1MCmIQB0DWwA7fx5j0KDhKXc')
+        //     ->trialDays(10)
+        //     ->create($paymentMethod, [
+        //         'email' => $user->email,
+        //     ]);
+
+$dateone=Carbon::parse('2022-12-25');
+        //for trial until this date subscription
+        $request->user()->newSubscription('Second', 'price_1MCmIQB0DWwA7fx5j0KDhKXc')
+            ->trialUntil($dateone)
             ->create($paymentMethod, [
                 'email' => $user->email,
             ]);
+
 
         return redirect()->route('home')->with('success', 'Your plan subscribed successfully');
     }
@@ -44,7 +65,7 @@ class SubscriptionController extends Controller
         $data = $request->except('_token');
 
         $data['slug'] = strtolower($data['name']);
-        $price = $data['cost'] *100;
+        $price = $data['cost'] * 100;
 
         //create stripe product
         $stripeProduct = $this->stripe->products->create([
@@ -54,7 +75,7 @@ class SubscriptionController extends Controller
         //Stripe Plan Creation
         $stripePlanCreation = $this->stripe->plans->create([
             'amount' => $price,
-            'currency' => 'inr',
+            'currency' => 'usd',
             'interval' => 'month', //  it can be day,week,month or year
             'product' => $stripeProduct->id,
         ]);

@@ -20,7 +20,6 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script>
 $(document).ready(function() {
-alert("you are here");
     // Custom styling can be passed to options when creating an Element.
     // (Note that this demo uses a wider set of styles than the guide below.)
     var style = {
