@@ -42,7 +42,7 @@ class SubscriptionController extends Controller
         //         'email' => $user->email,
         //     ]);
 
-$dateone=Carbon::parse('2022-12-25');
+$dateone=Carbon::parse('2022-12-27')->addDays(1);
         //for trial until this date subscription
         $request->user()->newSubscription('Second', 'price_1MCmIQB0DWwA7fx5j0KDhKXc')
             ->trialUntil($dateone)

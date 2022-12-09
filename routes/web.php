@@ -21,6 +21,7 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/home',[App\Http\Controllers\HomeController::class,  'index'])->name('home');
+    Route::get('/theme',[App\Http\Controllers\HomeController::class,  'theme'])->name('theme');
     Route::get('/plans',[App\Http\Controllers\PlanController::class,'index'])->name('plans.index');
     Route::get('/plan/{plan}', [App\Http\Controllers\PlanController::class,'show'])->name('plans.show');
     Route::post('/subscription', [App\Http\Controllers\SubscriptionController::class,'create'])->name('subscription.create');
